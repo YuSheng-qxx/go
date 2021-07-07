@@ -1,0 +1,283 @@
+
+package main
+
+import "fmt"
+
+func test(x, y int) {
+	var z int
+	func() {
+		defer func() {
+			if recover() != nil { z = 0 }
+		}()
+		z = x / y
+		return
+	}()
+	fmt.Println("x / y =", z)
+}
+func main(){
+	test(6, 2)
+}
+
+/*func test1() func() {
+	x := 100
+	fmt.Printf("x (%p) = %d...\n", &x, x)
+	return func() {
+		fmt.Printf("x (%p) = %d\n", &x, x)
+	}
+}
+func test() {
+	x, y := 10, 20
+	defer func(i int) {
+		println("defer:", i, y) // y 闭包引⽤
+
+	}(x) // x 被复制
+	x += 10
+	y += 100
+	println("x =", x, "y =", y)
+}
+func main() {
+	test()
+}
+/*func add(x, y int) (z int) {
+	defer func() {
+		println(z)
+	}()
+	z = x + y
+	return z + 200
+}
+func main() {
+	fns := [](func(x int) int){
+		func(x int) int { return x + 1 },
+		func(x int) int { return x + 2 },
+	}
+	println(fns[0](100))
+	println(add(1, 2))
+}
+/*func test(s string, n ...int) string{
+	var x int
+	for _, i := range n{
+		x += i
+	}
+	return fmt.Sprintf(s, x)
+}
+func main(){
+	fmt.Println(test("sum: %d", 1, 2, 3))
+}
+
+/*func test(fn func() int) int {
+	return fn()
+}
+/*func test(x, y int, s string) (int, string){
+	n := x+y
+	return n, fmt.Sprint(s, n)
+}
+type FormatFunc func(s string, x, y int) string
+func format(fn FormatFunc, s string, x, y int) string{
+	return fn(s, x, y)
+}
+func main() {
+	s1 := test(func() int { return 100 }) // 直接将匿名函数当参数。
+	s2 := format(func(s string, x, y int) string {
+		return fmt.Sprintf(s, x, y)
+	}, "%d, %d", 10, 20)
+	println(s1, s2)
+
+}
+
+
+func main(){
+	m := map[string]int{"a": 1, "b": 2}
+	for k, v := range m { // 返回 (key, value)。
+		println(k, v)
+	}
+	L1:
+	for x := 0; x < 3; x++ {
+	L2:
+		for y := 0; y < 5; y++ {
+			if y > 2 {
+				continue L2
+			}
+			if x > 1 {
+				break L1
+			}
+			print(x, ":", y, " ")
+		}
+		println()
+	}
+	q := 100
+	switch {
+	case q >= 0:
+		if q == 0{break}
+		println(q)
+	}
+
+	a := [3]int{0, 1, 2}
+	for i, v := range a { // index、value 都是从复制品中取出。
+		if i == 0 { // 在修改前，我们先修改原数组。
+			a[1], a[2] = 999, 999
+			fmt.Println(a) // 确认修改有效，输出 [0, 999, 999]。
+		}
+		a[i] = v + 100 // 使⽤复制品中取出的 value 修改原数组。
+	}
+	fmt.Println(a)
+
+	x := []int{1, 2, 3}
+	i := 2
+	switch i {
+	case x[1]:
+		println("a")
+		fallthrough
+	case 1, 3:
+		println("b")
+	default:
+		println("c")
+	}
+
+	x := []int{1, 2, 3}
+	switch i := x[2]; { // 带初始化语句
+	case i > 0:
+		println("a")
+	case i < 0:
+		println("b")
+	default:
+		println("c")
+	}
+
+
+
+	s := []int{1, 2, 3, 4, 5}
+	for i, v := range s { // 复制 struct slice { pointer, len, cap }。
+		if i == 0 {
+			s = s[:3] // 对 slice 的修改，不会影响 range。
+			s[2] = 100 // 对底层数据的修改。
+		}
+		println(i, v)
+	}
+}
+func main(){
+	type bigint int64
+	x1 := 1234
+	var b0 bigint = bigint(x1) // 必须显式转换，除⾮是常量。
+	var b1 int64 = int64(b0)
+	fmt.Println(b0, b1)
+
+
+	x := 0x12345678
+	pa := unsafe.Pointer(&x) // *int -> Pointer
+	n := (*[4]byte)(pa) // Pointer -> *[4]byte
+	for i := 0; i < len(n); i++ {
+		fmt.Printf("%X ", n[i])
+	}
+
+	type data struct{a int}
+	var d = data{1234}
+	var p *data
+	p = &d
+	fmt.Printf("%p, %v\n", p, p.a)
+
+	a := []int{0, 0, 0}
+	a[1] = 10
+	fmt.Println(a)
+	b := make([]int, 3)
+	b[1] = 10
+	fmt.Println(b)
+	s := "Hello, " +
+		"World!"
+	fmt.Println(s)
+	st := "abcd"
+	bs := []byte(st)
+	bs[1] = 'B'
+	fmt.Println(string(bs))
+	u := "电脑"
+	us := []rune(u)
+	us[1] = '话'
+	fmt.Println(string(us))
+
+	sa := "abc汉字"
+	for i := 0; i < len(sa); i++ { // byte
+		fmt.Printf("%c,", sa[i])
+	}
+	fmt.Println()
+	for _, r := range sa { // rune
+		fmt.Printf("%c,", r)
+	}
+}
+
+/*type Color int
+const (
+	Black Color = iota
+	Red
+	Blue
+)
+func test(c Color) {
+	fmt.Println(c)
+}
+func main() {
+	c := Black
+	test(c)
+
+	test(1)
+}
+
+/*
+func main(){
+	const (
+		s = "abc"
+		x
+	)
+	fmt.Println(s, x)
+
+	const(
+		a = "zxcvfyhdgfey"
+		b = len(a)
+		c = unsafe.Sizeof(b)
+	)
+	fmt.Println(a, b, c)
+
+	const (
+		A, B = iota, iota << 10
+		C, D
+	)
+	fmt.Println(A, B, C, D)
+}
+
+
+/*
+func test()(int, string){
+	return 1111, "xyz"
+}
+func main() {
+	var b, c int = 1, 2
+	fmt.Println(b, c)
+
+	var s, n = "abc", 123
+	fmt.Println(s, n)
+
+	x := 1234
+	fmt.Println(x)
+
+	p, q := 0X1234, "hello world!"
+	//0001001000110100
+	fmt.Println(p, q)
+
+	data, i := [3]int{0, 1, 2}, 0
+	i, data[i] = 2, 100
+	fmt.Println(data)
+
+	_,sp := test()
+	fmt.Println(sp)
+
+	st := 0
+	fmt.Println(st)
+
+	sq := "abc"
+	println(&sq)
+	sq, y := "hello", 20 // 重新赋值: 与前 s 在同⼀层次的代码块中，且有新的变量被定义。
+	println(&sq, y) // 通常函数多返回值 err 会被重复使⽤。
+	{
+		sq, z := 1000, 30 // 定义新同名变量: 不在同⼀层次代码块。
+		println(&sq, z)
+	}
+
+	fmt.Println("Google" + "Runoob")
+}*/

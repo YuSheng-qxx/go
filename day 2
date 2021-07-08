@@ -1,0 +1,262 @@
+package main
+
+import "fmt"
+
+func Register(){
+
+}
+func Login(){
+
+}
+func main(){
+	var n int
+	fmt.Println("请选择你要进行的操作：")
+	fmt.Println(" 1. 注册   2.登录  ")
+	fmt.Scanf("%d", &n)
+	switch n{
+	case 1:
+		Register()
+	case 2:
+		Login()
+	default:
+		fmt.Println("输入错误，请重新选择")
+	}
+}
+/*type User struct {
+	id int
+	name string
+}
+func main() {
+	u := User{1, "Tom"}
+	var i interface{} = u
+	u.id = 2
+	u.name = "Jack"
+	fmt.Printf("%v\n", u)
+	fmt.Printf("%v\n", i.(User))
+}
+/*type Stringer interface {
+	String() string
+}
+type Printer interface {
+	Stringer
+	Print()
+}
+type User struct {
+	id int
+	name string
+}
+func (self *User) String() string {
+	return fmt.Sprintf("user: %d, %s", self.id, self.name)
+}
+func (self *User) Print() {
+	fmt.Println(self.String())
+}
+func main() {
+	var t Printer = &User{1, "Tom"} // *User ⽅法集包含 String、Print。
+	t.Print()
+}
+/*type User struct {
+	id int
+	name string
+}
+func (self User) Test() {
+	fmt.Println(self)
+}
+func main() {
+	u := User{1, "Tom"}
+	mValue := u.Test // ⽴即复制 receiver，因为不是指针类型，不受后续修改影响。
+	u.id, u.name = 2, "Jack"
+	u.Test()
+	mValue()
+}
+/*type User struct{
+	id int
+	name string
+}
+type Manager struct{
+	User
+}
+func (self *User) Test() {
+	fmt.Printf("%p, %v\n", self, self)
+}
+func main(){
+	u := User{1, "zhangsan"}
+
+	u.Test()
+	mValue := u.Test
+	mValue()
+	mExpression := (*User).Test
+	mExpression(&u)
+}
+/*type X struct{}
+func (*X) test() {
+	println("X.test")
+}
+func main() {
+	p := &X{}
+	p.test()
+}
+/*type Data struct{
+	x int
+}
+func (self Data) ValueTest() { // func ValueTest(self Data);
+	fmt.Printf("Value: %p\n", &self)
+}
+func (self *Data) PointerTest() { // func PointerTest(self *Data);
+	fmt.Printf("Pointer: %p\n", self)
+}
+func main() {
+	d := Data{}
+	p := &d
+	fmt.Printf("Data: %p\n", p)
+	d.ValueTest() // ValueTest(d)
+	d.PointerTest() // PointerTest(&d)
+	p.ValueTest() // ValueTest(*p)
+	p.PointerTest() // PointerTest(p)
+}
+/*type user struct{name string}
+func main(){
+	m := map[int]user{
+		1: {"user"},
+	}
+	u := m[1]
+	u.name = "zhangsan"
+	m[1] = u
+	fmt.Println(m[1].name)
+	m2 := map[int]*user{
+		1: &user{"user1"},
+	}
+	m2[1].name = "lisi"
+	fmt.Println(m2[1].name)
+}
+/*func main(){
+	m := map[string]int{
+		"a": 1,
+	}
+	if v, ok := m["a"]; ok { // 判断 key 是否存在。
+		println(v)
+	}
+	println(m["c"])
+	m["b"] = 2
+	println(len(m))
+	for k, v := range m {
+		println(k, v)
+	}
+}
+/*func main(){
+	m := map[int]struct{
+		name string
+		age int
+	}{
+		0:{"zhang", 10},
+		1:{"user2", 15},
+	}
+	fmt.Println(m[0].name)
+}
+/*func main(){
+	data := [...]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	s := data[8:]  //8, 9
+	s2 := data[:5] //0, 1, 2, 3, 4
+	copy(s2, s)
+	fmt.Println(s2)//8, 9, 2, 3, 4
+	fmt.Println(data) //8 9 2 3 4 5 6 7 8 9
+}
+
+/*func main(){
+	s := make([]int, 0, 5)
+	fmt.Printf("%p\n", &s)
+	s2 := append(s, 1)
+	fmt.Printf("%p\n", s2)
+	fmt.Println(s, s2)
+
+	data := [...]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	s1 := data[:3]
+	s3 := append(s1, 100, 200)
+	fmt.Println(data)
+	fmt.Println(s1)
+	fmt.Println(s3)
+}
+/*func main(){
+	s := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	s1 := s[2: 5]
+	s1[2] = 100
+	s2 := s1[2: 6: 7]
+	s2[3] = 200
+	//s3 := s2[3: 6]
+	fmt.Println(s1)
+	fmt.Println(s2)
+	fmt.Println(s)
+}
+/*func main(){
+	data := [...]int{0, 1, 2, 3, 4, 5, 6}
+	s := data[2: 4]
+	s[0] += 100
+	s[1] += 200
+	fmt.Println(s)
+	s1 := []int{0, 1, 2, 3, 8: 100} // 通过初始化表达式构造，可使⽤索引号。
+	fmt.Println(s1, len(s1), cap(s1))
+	s2 := make([]int, 6, 8) // 使⽤ make 创建，指定 len 和 cap 值。
+	fmt.Println(s2, len(s2), cap(s2))
+	s3 := make([]int, 6) // 省略 cap，相当于 cap = len。
+	fmt.Println(s3, len(s3), cap(s3))
+	a := []int{0, 1, 2, 3}
+	p := &a[2]
+	*p += 100
+	fmt.Println(a)
+	a1 := []int{1, 2, 3, 4, 5}
+	a2 := a1
+	for i:=0; i<len(a2); i++{
+		a2[i] += 1
+	}
+	fmt.Println(a1)
+}
+
+/*func test(x [2]int){
+	fmt.Printf("x:%p\n", &x)
+	x[1] = 1000  //没有修改成功a[1]的值
+}
+func main(){
+	data := [...]int{0, 1, 2, 3, 4, 5, 6}
+	slice := data[1: 4: 5]
+	fmt.Println(slice)
+	a := [2]int{}
+	fmt.Printf("a: %p\n", &a)
+	test(a)
+	fmt.Println(a)
+	fmt.Println(len(a), cap(a))
+}
+/*func test(x, y int) {
+	var z int
+	func() {
+		defer func() {
+			if recover() != nil { z = 0 }
+		}()
+		z = x / y
+		return
+	}()
+	fmt.Println("x / y =", z)
+}
+struct Slice{
+	byte* array;
+	uintgo len;
+	uintgo cap;
+}
+
+func main(){
+	a := [3]int{1, 2}
+	b := [...]int{4, 5, 6}
+	c := [5]int{2:100, 4:200}
+	d := [...]struct{
+		name string
+		age uint8
+	}{
+		{"zhangsan", 15},
+		{"lisi", 18},
+	}
+	fmt.Println(a)
+	fmt.Println(b)
+	fmt.Println(c)
+	fmt.Println(d)
+	test(6, 2)
+}*/
+

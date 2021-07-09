@@ -1,0 +1,71 @@
+package main
+
+import "fmt"
+func Equals(a []int, b []int) bool{
+	if len(a) != len(b){
+		return false
+	}
+	mp := make(map[int]int)
+	for i:=0; i<len(a); i++{
+		mp[a[i]]++
+	}
+	for i:=0;i<len(b); i++{
+		mp[b[i]]--
+		if(mp[b[i]] < 0){
+			return false
+		}
+	}
+	for i:=0; i<len(a); i++{
+		if(mp[a[i]] > 0){
+			return false
+		}
+	}
+	return true
+}
+func main(){
+	a := []int{7, 8, 1, 5, 2, 0, 9}
+	b := []int{0, 5, 2, 7, 8, 1, 9}
+	var flag bool = Equals(a, b)
+	if flag{
+		fmt.Println("a is equals to b")
+	}else{
+		fmt.Println("a is not equals to b")
+	}
+
+}
+
+/*func Sort(a []int, start int, end int){
+	for i:= start+1; i<end; i++{
+		tmp := i
+		for tmp>start && a[tmp] < a[tmp-1] {
+			res := a[tmp]
+			a[tmp] = a[tmp-1]
+			a[tmp-1] = res
+			tmp--
+		}
+	}
+}
+
+func Equals(a []int, b []int) bool{
+	if len(a) != len(b){
+		return false
+	}
+	Sort(a, 0, len(a))
+	Sort(b, 0, len(b))
+	for i:=0; i<len(a); i++{
+		if(a[i] != b[i]){
+			return false
+		}
+	}
+	return true
+}
+func main(){
+	a := []int{7, 8, 1, 5, 2, 0, 9}
+	b := []int{0, 5, 2, 7, 8, 1, 3}
+	var flag bool = Equals(a, b)
+	if flag{
+		fmt.Println("a is equals to b")
+	}else{
+		fmt.Println("a is not equals to b")
+	}
+}*/

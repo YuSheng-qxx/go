@@ -1,0 +1,200 @@
+package main
+
+import (
+	"fmt"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/sessions"
+	"gopkg.in/mgo.v2"
+)
+
+type Result struct {
+	Msg string `json:"msg"`
+}
+
+type User struct {
+	UserName string
+	UserPwd  string
+}
+
+func main() {
+	app := iris.New()
+	sessionID := "mySession"
+	sess := sessions.New(sessions.Config{
+		Cookie: sessionID,
+	})
+	app.Post("/register", func(ctx iris.Context) {
+		fmt.Println("register:")
+		path := ctx.Path()
+		app.Logger().Info(" 请求Path：", path)
+		userName := ctx.PostValue("UserName")
+		passwd := ctx.PostValue("UserPwd")
+
+		sion, err := mgo.Dial("192.168.30.141:27017")
+		if err != nil {
+			panic(err)
+		}
+		db := sion.DB("mgdb")
+		c := db.C("myrl")
+
+		err = c.Insert(&User{userName, passwd})
+
+		if err != nil {
+			ctx.WriteString("账户注册失败")
+		} else {
+			ctx.WriteString("账户注册成功")
+		}
+	})
+	app.Post("/login", func(ctx iris.Context) {
+		fmt.Println("login:")
+		path := ctx.Path()
+		app.Logger().Info(" 请求Path：", path)
+		userName := ctx.PostValue("UserName")
+		passwd := ctx.PostValue("UserPwd")
+
+		sion, err := mgo.Dial("192.168.30.141:27017")
+		if err != nil {
+			panic(err)
+		}
+		db := sion.DB("mgdb")
+		c := db.C("myrl")
+
+		err = c.Find(&User{userName, passwd}).One(Result{})
+		if err == nil {
+			session := sess.Start(ctx)
+			session.Set("ISLOGIN", false)
+			ctx.WriteString("账户登录失败")
+		} else {
+			session := sess.Start(ctx)
+			session.Set("USERNAME", "userName")
+			session.Set("ISLOGIN", true)
+			ctx.WriteString("账户登录成功")
+		}
+	})
+	app.Run(iris.Addr("127.0.0.1:8080"), iris.WithoutServerError(iris.ErrServerClosed))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import (
+	"encoding/json"
+	"fmt"
+	"gopkg.in/mgo.v2"
+	"log"
+	"net/http"
+)
+
+type Result struct {
+	Msg string `json:"msg"`
+}
+type Session struct{
+	 sessionId uint64
+	 name      string
+}
+
+type User struct {
+	UserName string
+	UserPwd  string
+}
+
+func register(w http.ResponseWriter, r *http.Request){
+	fmt.Println("register：")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	r.ParseForm()
+	username := r.Form["username"]
+	password := r.Form["password"]
+	session,err := mgo.Dial("192.168.30.141:27017")
+	if err != nil {
+		panic(err)
+	}
+	db := session.DB("mgdb")
+	c := db.C("myrl")
+
+	var post User
+	post.UserName = username[0]
+	post.UserPwd = password[0]
+
+	err = c.Insert(&User{post.UserName, post.UserPwd})
+
+	if err != nil {
+		res := Result{Msg: "Fail to register"}
+		jsonChar, jsonErr := json.Marshal(res)
+		if jsonErr != nil {
+			fmt.Println("Fail to encode!")
+		} else {
+			w.Write(jsonChar)
+		}
+	} else {
+		res := Result{Msg: "Succeed to register"}
+		jsonChar, jsonErr := json.Marshal(res)
+		if jsonErr != nil {
+			fmt.Println("Fail to encode!")
+		} else {
+			w.Write(jsonChar)
+		}
+	}
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("login：")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	r.ParseForm()
+	username := r.Form["username"]
+	password := r.Form["password"]
+
+	session,err := mgo.Dial("192.168.30.141:27017")
+	if err != nil {
+		panic(err)
+	}
+	db := session.DB("mgdb")
+	c := db.C("myrl")
+
+	var post User
+	post.UserName = username[0]
+	post.UserPwd = password[0]
+
+	err = c.Find(&User{post.UserName, post.UserPwd}).One(Result{})
+
+	if err == nil {
+		res := Result{Msg: "Fail to login"}
+		jsonChar, jsonErr := json.Marshal(res)
+		if jsonErr != nil {
+			fmt.Println("Fail to encode!")
+		} else {
+			w.Write(jsonChar)
+		}
+	} else {
+		res := Result{Msg: "Succeed to login"}
+		jsonChar, jsonErr := json.Marshal(res)
+		if jsonErr != nil {
+			fmt.Println("Fail to encode!")
+		} else {
+			w.Write(jsonChar)
+		}
+	}
+}
+
+func main() {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/register", register)
+	mux.HandleFunc("/login", login)
+
+	fmt.Println("127.0.0.1:8080")
+	err := http.ListenAndServe("127.0.0.1:8080", mux)
+	if err != nil {
+		log.Fatal("ListenAndServer:", err.Error())
+	}
+}
+*/

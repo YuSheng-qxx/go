@@ -1,0 +1,9 @@
+{
+  "Port": "8080",
+  "DBUserName": "",
+  "DBPassword": "",
+  "DBIp": "127.0.0.1",
+  "DBPort": "27017",
+  "DBName": "test",
+  "Collection": "myrl"
+}

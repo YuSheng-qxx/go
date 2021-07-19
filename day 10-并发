@@ -1,0 +1,172 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+var (
+	// 逻辑中使用的某个变量
+	count int
+	// 与变量对应的使用互斥锁
+	countGuard sync.Mutex
+)
+func GetCount() int {
+	// 锁定
+	countGuard.Lock()
+	// 在函数退出时解除锁定
+	defer countGuard.Unlock()
+	return count
+}
+func SetCount(c int) {
+	countGuard.Lock()
+	count = c
+	countGuard.Unlock()
+}
+func main() {
+	// 可以进行并发安全的设置
+	SetCount(1)
+	// 可以进行并发安全的获取
+	fmt.Println(GetCount())
+}
+
+
+/*
+// wg 用来等待程序结束
+var wg sync.WaitGroup
+// main 是所有Go 程序的入口
+func main() {
+	// 创建一个无缓冲的通道
+	baton := make(chan int)
+	// 为最后一位跑步者将计数加1
+	wg.Add(1)
+	// 第一位跑步者持有接力棒
+	go Runner(baton)
+	// 开始比赛
+	baton <- 1
+	// 等待比赛结束
+	wg.Wait()
+}
+// Runner 模拟接力比赛中的一位跑步者
+func Runner(baton chan int) {
+	var newRunner int
+	// 等待接力棒
+	runner := <-baton
+	// 开始绕着跑道跑步
+	fmt.Printf("Runner %d Running With Baton\n", runner)
+	// 创建下一位跑步者
+	if runner != 4 {
+		newRunner = runner + 1
+		fmt.Printf("Runner %d To The Line\n", newRunner)
+		go Runner(baton)
+	}
+	// 围绕跑道跑
+	time.Sleep(100 * time.Millisecond)
+	// 比赛结束了吗？
+	if runner == 4 {
+		fmt.Printf("Runner %d Finished, Race Over\n", runner)
+		wg.Done()
+		return
+	}
+	// 将接力棒交给下一位跑步者
+	fmt.Printf("Runner %d Exchange With Runner %d\n",
+		runner,
+		newRunner)
+	baton <- newRunner
+}
+/*func printer(c chan int) {
+	// 开始无限循环等待数据
+	for {
+		// 从channel中获取一个数据
+		data := <-c
+		// 将0视为数据结束
+		if data == 0 {
+			break
+		}
+		// 打印数据
+		fmt.Println(data)
+	}
+	// 通知main已经结束循环(我搞定了!)
+	c <- 0
+}
+func main() {
+	// 创建一个channel
+	c := make(chan int)
+	// 并发执行printer, 传入channel
+	go printer(c)
+	for i := 1; i <= 10; i++ {
+		// 将数据通过channel投送给printer
+		c <- i
+	}
+	// 通知并发的printer结束循环(没数据啦!)
+	c <- 0
+	// 等待printer结束(搞定喊我!)
+	<-c
+}
+/*var (
+	counter int64
+	wg      sync.WaitGroup
+	mutex   sync.Mutex
+)
+func main() {
+	wg.Add(2)
+	go incCounter(1)
+	go incCounter(2)
+	wg.Wait()
+	fmt.Println(counter)
+}
+func incCounter(id int) {
+	defer wg.Done()
+	for count := 0; count < 2; count++ {
+		//同一时刻只允许一个goroutine进入这个临界区
+		mutex.Lock()
+		{
+			value := counter
+			runtime.Gosched()
+			value++
+			counter = value
+		}
+		mutex.Unlock() //释放锁，允许其他正在等待的goroutine进入临界区
+	}
+}
+/*var counter int = 0
+func Count(lock *sync.Mutex) {
+	lock.Lock()
+	counter++
+	fmt.Println(counter)
+	lock.Unlock()
+}
+func main() {
+	lock := &sync.Mutex{}
+	for i := 0; i < 10; i++ {
+		go Count(lock)
+	}
+	for {
+		lock.Lock()
+		c := counter
+		lock.Unlock()
+		runtime.Gosched()
+		if c >= 10 {
+			break
+		}
+	}
+}
+/*
+func running() {
+	var times int
+	// 构建一个无限循环
+	for {
+		times++
+		fmt.Println("tick", times)
+		// 延时1秒
+		time.Sleep(time.Second)
+	}
+}
+func main() {
+	// 并发执行程序
+	go running()
+	// 接受命令行输入, 不做任何事情
+	var input string
+	fmt.Scanln(&input)
+}
+*/

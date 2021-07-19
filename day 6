@@ -1,0 +1,59 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	ch := make(chan int)    //设置一个传送数据的channel
+	quit := make(chan bool) //设置一个超时传送的channel
+	//新开一个协程
+	go func() {
+		for {
+			select {
+			case num := <-ch: //如果收到传输能道ch中的值则打印.
+				fmt.Println("num = ", num)
+			case <-time.After(3 * time.Second): //如果达到3秒则认定超时
+				fmt.Println("超时")
+				quit <- true //将quit通道置为true
+			}
+		}
+	}() //别忘了()
+	for i := 0; i < 5; i++ {
+		ch <- i
+		time.Sleep(time.Second)
+	}
+	<-quit //当超时quit将不再阻塞,主协和将会退出
+	fmt.Println("程序结束")
+	/*运行结果为
+		num =  0
+	num =  1
+	num =  2
+	num =  3
+	num =  4
+	超时
+	程序结束
+	*/
+}
+/*
+func running() {
+	var times int
+	for {// 构建一个无限循环
+		times++
+		fmt.Println("this is runing function's tick", times)//从笔者的机器上看runing函数中的ticks累加到300左右
+	}
+}
+func main() {
+
+	go running() //通过普通函数调用goroutine
+	go func() {  //通过匿名函数调用goroutine
+		var times int //注意这个times变量其实和匿名函数共同构成闭包
+		for {
+			times++
+			fmt.Println("this is anonymous function's tick ", times)//从笔者的机器上看runing函数中的ticks累加到300左右
+		}
+	}()
+	time.Sleep(time.Millisecond)//在本例中使用休眠的方式来阻塞main函数创建的主goroutine
+
+}*/

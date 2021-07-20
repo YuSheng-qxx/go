@@ -1,0 +1,27 @@
+/*
+class Solution {
+public:
+    int climbStairs(int n)
+    {
+        int n1=1,n2=1;
+        int i;
+        int temp;
+        for(i=2;i<=n;i++){
+            temp=n2;
+            n2=n1+n2;
+            n1=temp;
+        }
+        return n2;
+    }
+};
+ */
+func climbStairs(n int) int {
+	n1:=1
+	n2:=1
+	for i:=2; i<=n;i++{
+		tmp := n2
+		n2 = n1+n2
+		n1 = tmp
+	}
+	return n2
+}

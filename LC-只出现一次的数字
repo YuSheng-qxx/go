@@ -1,0 +1,20 @@
+/*
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int result = 0;
+        for(auto& n:nums)
+        {
+            result ^= n;
+        }
+        return result;
+    }
+};
+ */
+func singleNumber(nums []int) int {
+	var tmp int
+	for _,v := range nums{
+		 tmp ^= v
+	}
+	return tmp
+}

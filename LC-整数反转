@@ -1,0 +1,27 @@
+/*
+class Solution {
+public:
+    int reverse(int x) {
+        long n;
+        while(x)
+        {
+            n=n*10 + x%10;
+            x/=10;
+        }
+        return (int)n==n?n:0;
+    }
+};
+*/
+
+func reverse(x int) int {
+	var n int
+	for x != 0{
+		if n < math.MinInt32/10 || n > math.MaxInt32/10 {
+			return 0
+		}
+		tmp := x%10
+		x /= 10
+		n = n * 10 + tmp
+	}
+	return n
+}

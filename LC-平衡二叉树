@@ -1,0 +1,42 @@
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func max(x int, y int) int{
+	if x>y{
+		return x
+	} else {
+		return y
+	}
+}
+
+func Abs(x int, y int) int {
+	if x > y {
+		return x - y
+	} else {
+		return y - x
+	}
+}
+
+func Height(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	return max(Height(root.Left), Height(root.Right)) + 1
+}
+
+func isBalanced(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	lh := Height(root.Left)
+	rh := Height(root.Right)
+	if Abs(lh, rh) > 1 {
+		return false
+	}
+	return isBalanced(root.Left) && isBalanced(root.Right)
+}

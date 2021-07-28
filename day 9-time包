@@ -17,6 +17,7 @@ func main() {
 	fmt.Println(now.Format("15:04 2006/01/02"))
 	fmt.Println(now.Format("2006/01/02"))
 }
+
 /*
 //使用 time.Tick(时间间隔) 可以设置定时器，定时器的本质上是一个通道（channel），示例代码如下：
 func main() {
@@ -25,6 +26,7 @@ func main() {
 		fmt.Println(i) //每秒都会执行的任务
 	}
 }
+
 /*
 //time 包中的 Weekday 函数能够返回某个时间点所对应是一周中的周几
 func main() {
@@ -32,6 +34,7 @@ func main() {
 	t := time.Now()
 	fmt.Println(t.Weekday().String())
 }
+
 /*
 //使用 time.Unix() 函数可以将时间戳转为时间格式
 func main() {
@@ -47,6 +50,7 @@ func main() {
 	second := timeObj.Second() //秒
 	fmt.Printf("%d-%02d-%02d %02d:%02d:%02d\n", year, month, day, hour, minute, second)
 }
+
 /*
 //时间戳是自 1970 年 1 月 1 日（08:00:00GMT）至当前时间的总毫秒数，它也被称为 Unix 时间戳（UnixTimestamp）。
 func main() {
@@ -56,6 +60,7 @@ func main() {
 	fmt.Printf("现在的时间戳：%v\n", timestamp1)
 	fmt.Printf("现在的纳秒时间戳：%v\n", timestamp2)
 }
+
 /*func main() {
 	now := time.Now() //获取当前时间
 	fmt.Printf("current time:%v\n", now)

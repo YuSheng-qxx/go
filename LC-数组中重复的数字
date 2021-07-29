@@ -1,0 +1,12 @@
+func findRepeatNumber(nums []int) int {
+	 mp := make(map[int]int)
+	 var tmp int
+	for _, v := range nums {
+		mp[v]++
+		if mp[v] > 1{
+			tmp = v
+			break
+		}
+	}
+	return tmp
+}
